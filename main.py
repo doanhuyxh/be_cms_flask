@@ -141,12 +141,14 @@ def public_project(project_id):
         data = request.get_json()
         html = data['html']
         css = data['css']
-
+        print(html)
         check = project_build_collection.find_one({"project_id": project_id})
         if check:
             project_build_collection.update_one({"project_id": project_id}, {"$set": {"html": html, "css": css}})
         else:
             project_build_collection.insert_one({"project_id": project_id, "html": html, "css": css})
+
+        return jsonify({"message": "Project published successfully"}), 200
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -157,7 +159,7 @@ def get_public_project(project_id):
     Lấy dự án public từ MongoDB.
     """
     try:
-        project = project_build_collection.find_one({"project_id": project_id}, {"_id": 0})
+        project = project_build_collection.find_one({"project_id": project_id})
         if not project:
             return jsonify({"error": "Project not found"}), 404
 
